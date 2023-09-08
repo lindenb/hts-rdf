@@ -1,0 +1,4 @@
+#path	genomeId	ucsc	taxid
+data/hg19.fasta	grch37	hg19	9606
+data/hg38.fasta	grch38	hg38	9606
+data/rotavirus_rf.fa	rotavirus		10912
