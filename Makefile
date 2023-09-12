@@ -1,4 +1,11 @@
 SHELL=/bin/bash
+JENA=${HOME}/package/apache-jena-4.8.0
+JENA_BIN_DIR=$(JENA)/bin
+ARQ=$(JENA_BIN_DIR)/arq
+
+
+test:data/species.rdf data/query.species.01.sparql
+	$(ARQ) --data=$(word 1,$^) --query=$(word 2,$^)
 
 #
 # convert REF to rdf

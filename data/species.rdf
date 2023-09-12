@@ -22,26 +22,37 @@
 >
 
 
-<rdf:Description rdf:about="http://purl.uniprot.org/taxonomy/9606">
-	<rdfs:subClassOf rdf:resource="http://purl.uniprot.org/taxonomy/40674"/>
-	<dc:label>Homo Sapiens</dc:label>
-</rdf:Description>
+<u:Taxon rdf:about="http://purl.uniprot.org/taxonomy/9606">
+	<rdfs:subClassOf rdf:resource="http://purl.uniprot.org/taxonomy/9605"/>
+	<dc:title>Homo Sapiens</dc:title>
+</u:Taxon>
 
 
-<rdf:Description rdf:about="http://purl.uniprot.org/taxonomy/9605">
+<u:Taxon rdf:about="http://purl.uniprot.org/taxonomy/9605">
+	<rdfs:subClassOf rdf:resource="http://purl.uniprot.org/taxonomy/9604"/>
+	<dc:title>Homo</dc:title>
+</u:Taxon>
+
+<u:Taxon rdf:about="http://purl.uniprot.org/taxonomy/9604">
 	<rdfs:subClassOf rdf:resource="http://purl.uniprot.org/taxonomy/all"/>
-	<dc:label>Homo</dc:label>
-</rdf:Description>
+	<dc:title>Hominidae</dc:title>
+</u:Taxon>
 
 
-<rdf:Description rdf:about="http://purl.uniprot.org/taxonomy/10912">
+<u:Taxon rdf:about="http://purl.uniprot.org/taxonomy/63221">
+	<rdfs:subClassOf rdf:resource="http://purl.uniprot.org/taxonomy/9606"/>
+        <dc:title>Homo sapiens neanderthalensis</dc:title>
+</u:Taxon>
+
+
+<u:Taxon rdf:about="http://purl.uniprot.org/taxonomy/10912">
 	<rdfs:subClassOf rdf:resource="http://purl.uniprot.org/taxonomy/all"/>
-	<dc:label>Rotavirus</dc:label>
-</rdf:Description>
+	<dc:title>Rotavirus</dc:title>
+</u:Taxon>
 
-<rdf:Description rdf:about="http://purl.uniprot.org/taxonomy/all">
-	<dc:label>ROOT</dc:label>
-</rdf:Description>
+<u:Taxon rdf:about="http://purl.uniprot.org/taxonomy/all">
+	<dc:title>ROOT</dc:title>
+</u:Taxon>
 
 
 </rdf:RDF>
