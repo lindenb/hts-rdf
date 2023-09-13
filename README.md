@@ -188,7 +188,7 @@ join -t $'\t' -1 1 -2 1  TMP/sorted.refs.txt TMP/references.md5.tmp.a | sort -t 
 rm -f  TMP/references.md5.tmp.a
 ```
 
-For each VCF, the header is extracted, we extract the the `chromosome` and `length` of the '##contig' lines, we calculate the  md_code(md5) checksum and we sort on  md_code(md5).
+For each VCF, the header is extracted, we extract the the `chromosome` and `length` of the `contig` lines, we calculate the `md5` checksum and we sort on  `md5`.
 
 ```bash
 find data -type f \( -name "*.vcf.gz" -o -name "*.bcf" -o -name "*.vcf" \) | sort > TMP/vcfs.txt
