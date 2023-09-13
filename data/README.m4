@@ -4,14 +4,21 @@ m4_define(`anchor',`[$1]($2)')m4_dnl
 m4_define(`localfile',`anchor($1,$1)')m4_dnl
 # hts-rdf
 
-Managing  sequencing data with RDF
+Author: Pierre Lindenbaum PhD.
+
+
+Here are a few notes about Managing  sequencing data with RDF. I want to keep track of the samples, BAMs, references, diseases etc..  used in my lab.
+
+  - I don't want to use a sql database.
+  - I don't want to join too many tab delimited files.
+  - I want to use a controlled vocabulary to define things like a disease, etc...
+  - In this document I won't explain what are md_code(RDF) or md_code(SPARQL).
+  - I use the md_code(RDF+XML) notation because I 'm used to work with md_code(XML).
+  - I create a namespace for my lab:  md_code(https://umr1087.univ-nantes.fr/rdf/) and a md_code(XML) entity for this namespace: md_code(&u1087;).
+  - I tried to reuse existing ontologies (e.g. md_code(foaf:Person) for samples) as much as I can, but sometimes I created my own classes and properties.
+
 
 # Building the RDF GRAPH
-
-Notes
-  - I use the md_code(RDF+XML) notation because I 'm used to work with md_code(XML).
-  - I create a namespace for my lab:  md_code(https://umr1087.univ-nantes.fr/rdf/) and a md_code(XML) entity for this namespace: md_code(&u1087).
-  - I tried to reuse existing ontologies (e.g. md_code(foaf:Person) for samples) as much as I can, but sometimes I created my own classes and properties.
 
 ## Species
 
@@ -35,7 +42,7 @@ m4_syscmd(tail -n+24  data/diseases.rdf)m4_dnl
 md_pre
 
 
-## References
+## References / FASTA / Genomes
 
 I manually wrote localfile(data/references.tsv) a tab delimited text file defining each FASTA reference genome available on my cluster. The taxon id will be used to retrive the species associated to a FASTA file.
 
@@ -80,10 +87,12 @@ find ${PWD}/data -type f -name "*.bam" |\
 	samtools samples -F TMP/references.txt |\
 	sort -T TMP -t $'\t' -k3,3 |\
 	join -t $'\t' -1 3 -2 1 - TMP/sorted.refs.txt > TMP/bams.txt
+
 cat data/header.rdf.part > TMP/bams.rdf
+
 awk -F '\t' -f data/samtools.samples.to.rdf.awk TMP/bams.txt >> TMP/bams.rdf
-mkdir -p TMP/
-cat data/footer.rdf.part > TMP/bams.rdf
+
+cat data/footer.rdf.part >> TMP/bams.rdf
 md_pre
 
 the output:
@@ -96,7 +105,7 @@ md_pre
 
 ## Combing all the RDF chunks
 
-[jena/rio](https://jena.apache.org/) is used to merge md_code(RDF) files into locafile(knowledge.rdf)
+[jena/rio](https://jena.apache.org/) is used to merge md_code(RDF) files into localfile(knowledge.rdf)
 
 md_pre(bash)
 riot --formatted=RDFXML TMP/references.rdf data/species.rdf TMP/bams.rdf data/diseases.rdf data/samples.rdf > knowledge.rdf
