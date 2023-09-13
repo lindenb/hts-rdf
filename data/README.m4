@@ -103,7 +103,7 @@ m4_syscmd(xmllint --format TMP/bams.rdf | grep S5 -A 2)m4_dnl
 (...)
 md_pre
 
-## Combing all the RDF chunks
+## Combining all the RDF chunks
 
 [jena/rio](https://jena.apache.org/) is used to merge md_code(RDF) files into localfile(knowledge.rdf)
 

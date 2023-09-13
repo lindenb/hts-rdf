@@ -206,7 +206,7 @@ the output:
 (...)
 ```
 
-## Combing all the RDF chunks
+## Combining all the RDF chunks
 
 [jena/rio](https://jena.apache.org/) is used to merge `RDF` files into [knowledge.rdf](knowledge.rdf)
 
