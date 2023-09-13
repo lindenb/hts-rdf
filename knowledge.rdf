@@ -127,6 +127,21 @@
     <u:sample rdf:resource="https://umr1087.univ-nantes.fr/rdf/samples/S1"/>
     <u:filename>/home/lindenb/src/hts-rdf/data/S1.grch38.bam</u:filename>
   </u:Bam>
+  <u:Vcf rdf:about="file://data/variants2.vcf">
+    <u:sample rdf:resource="https://umr1087.univ-nantes.fr/rdf/samples/S3"/>
+    <u:sample rdf:resource="https://umr1087.univ-nantes.fr/rdf/samples/S2"/>
+    <u:sample rdf:resource="https://umr1087.univ-nantes.fr/rdf/samples/S1"/>
+    <u:reference rdf:resource="https://umr1087.univ-nantes.fr/rdf/references/grch37"/>
+    <u:filename>data/variants2.vcf</u:filename>
+  </u:Vcf>
+  <u:Vcf rdf:about="file://data/variants1.vcf">
+    <u:sample rdf:resource="https://umr1087.univ-nantes.fr/rdf/samples/S5"/>
+    <u:sample rdf:resource="https://umr1087.univ-nantes.fr/rdf/samples/S3"/>
+    <u:sample rdf:resource="https://umr1087.univ-nantes.fr/rdf/samples/S2"/>
+    <u:sample rdf:resource="https://umr1087.univ-nantes.fr/rdf/samples/S1"/>
+    <u:reference rdf:resource="https://umr1087.univ-nantes.fr/rdf/references/grch38"/>
+    <u:filename>data/variants1.vcf</u:filename>
+  </u:Vcf>
   <u:Taxon rdf:about="http://purl.uniprot.org/taxonomy/63221">
     <dc:title>Homo sapiens neanderthalensis</dc:title>
     <rdfs:subClassOf rdf:resource="http://purl.uniprot.org/taxonomy/9606"/>

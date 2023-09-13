@@ -5,6 +5,7 @@ Author: Pierre Lindenbaum PhD.
 
 Here are a few notes about Managing  sequencing data with RDF. I want to keep track of the samples, BAMs, references, diseases etc..  used in my lab.
 
+  - This document is auto-generated using [Makefile](Makefile). Do not edit it.
   - I don't want to use a sql database.
   - I don't want to join too many tab delimited files.
   - I want to use a controlled vocabulary to define things like a disease, etc...
@@ -12,6 +13,7 @@ Here are a few notes about Managing  sequencing data with RDF. I want to keep tr
   - I use the `RDF+XML` notation because I 'm used to work with `XML`.
   - I create a namespace for my lab:  `https://umr1087.univ-nantes.fr/rdf/` and a `XML` entity for this namespace: `&u1087;`.
   - I tried to reuse existing ontologies (e.g. `foaf:Person` for samples) as much as I can, but sometimes I created my own classes and properties.
+  - I'm not an expert of `SPARQL` or `RDF`
 
 
 # Building the RDF GRAPH
@@ -172,9 +174,53 @@ The Class `foaf:Group` is used to create a group of samples.
 </rdf:RDF>
 ```
 
+## VCF BCF
+
+### VCF and genomes
+
+for `VCF` files, we need to associate a VCF and the reference genome:
+We can extract the `chromosome` and `length` of the references, we calculate the  `md5` checksum and we sort on  `md5`.
+
+```bash
+tail -n+2 data/references.tsv | sort -T TMP -t $'\t' -k1,1 > TMP/sorted.refs.txt
+cut -f 1 TMP/sorted.refs.txt | while read FA; do echo -ne "${FA}\t" && cut -f 1,2 "${FA}.fai" | md5sum | cut -d ' ' -f 1; done > TMP/references.md5.tmp.a
+join -t $'\t' -1 1 -2 1  TMP/sorted.refs.txt TMP/references.md5.tmp.a | sort -t $'\t' -k5,5 > TMP/references.md5
+rm -f  TMP/references.md5.tmp.a
+```
+
+For each VCF, the header is extracted, we extract the the `chromosome` and `length` of the '##contig' lines, we calculate the  md_code(md5) checksum and we sort on  md_code(md5).
+
+```bash
+find data -type f \( -name "*.vcf.gz" -o -name "*.bcf" -o -name "*.vcf" \) | sort > TMP/vcfs.txt
+(cat TMP/vcfs.txt| while read V ; \
+		do echo -en "${V}\t" && \
+		bcftools view --header-only "${V}"  | awk  -F '[=,<>]' '/^##contig/ {printf("%s\t%s\n",$4,$6);}'   | md5sum | cut -d ' ' -f1 ; done) | sort -t $'\t' -k2,2 > TMP/vcfs.md5.txt
+```
+
+we join both files on `md5` and we convert to `RDF` using `awk`:
+
+```bash
+cat data/header.rdf.part > TMP/vcf2ref.rdf
+join -t $'\t' -1 2 -2 5 TMP/vcfs.md5.txt TMP/references.md5 |\
+	awk -F '\t' '{printf("<u:Vcf rdf:about=\"file://%s\"><u:filename>%s</u:filename><u:reference rdf:resource=\"&u1087;references/%s\"/></u:Vcf>",$2,$2,$4); }' >> TMP/vcf2ref.rdf
+cat data/footer.rdf.part >> TMP/vcf2ref.rdf
+```
+
+### VCF and samples
+
+to link the  `VCF` files and the  sample, we use  `bcftools query -l` to extract the samples and we convert to `RDF` using `awk`:
+
+```bash
+find data -type f \( -name "*.vcf.gz" -o -name "*.bcf" -o -name "*.vcf" \) | sort > TMP/vcfs.txt
+cat data/header.rdf.part > TMP/vcf2samples.rdf
+cat TMP/vcfs.txt | while read F; do bcftools query -l "${F}" | awk -vVCF="$F" 'BEGIN {printf("<u:Vcf rdf:about=\"file://%s\"><u:filename>%s</u:filename>",VCF,VCF); } {printf("<u:sample rdf:resource=\"&u1087;samples/%s\"/>",$1);} END {printf("</u:Vcf>");}' >> TMP/vcf2samples.rdf ; done
+cat data/footer.rdf.part >> TMP/vcf2samples.rdf
+```
+
+
 ## BAM files
 
-BAM file contains the sample names in their read-groups; We use `samtools samples` to extract the samples, the reference and the path of each BAM file.
+`BAM` file contains the sample names in their read-groups; We use `samtools samples` to extract the samples, the reference and the path of each `BAM` file.
 [data/samtools.samples.to.rdf.awk](data/samtools.samples.to.rdf.awk) is used to convert the output of `samtools samples`  to `RDF`.
 
 
@@ -227,7 +273,9 @@ arq --data=knowledge.rdf --query=querysparql
 
 > show me the species that are a sub-taxon of "Homo"
 
-query [data/query.species.01.sparql](data/query.species.01.sparql):
+
+
+query [data/query.species.01.sparql](data/query.species.01.sparql) :
 
 ```sparql
 (...)
@@ -242,7 +290,13 @@ WHERE {
 }
 ```
 
-output:
+execute:
+
+```bash
+arq --data=knowledge.rdf --query=data/query.species.01.sparql > TMP/species.01.out
+```
+
+output [TMP/species.01.out](TMP/species.01.out):
 
 ```
 -----------------------------------
@@ -254,11 +308,16 @@ output:
 -----------------------------------
 ```
 
+
+
+
 ## Example
 
 > show the diseases that are a sub disease of **COVID-19**.
 
-query [data/query.diseases.01.sparql](data/query.diseases.01.sparql):
+
+
+query [data/query.diseases.01.sparql](data/query.diseases.01.sparql) :
 
 ```sparql
 (...)
@@ -273,7 +332,13 @@ WHERE {
 }
 ```
 
-output:
+execute:
+
+```bash
+arq --data=knowledge.rdf --query=data/query.diseases.01.sparql > TMP/diseases.01.out
+```
+
+output [TMP/diseases.01.out](TMP/diseases.01.out):
 
 ```
 ---------------------
@@ -285,9 +350,13 @@ output:
 ```
 
 
+
+
 ## Example
 
 > find the samples , their children, parents , diseases
+
+
 
 query [data/query.samples.01.sparql](data/query.samples.01.sparql) :
 
@@ -332,7 +401,13 @@ WHERE {
 GROUP BY  ?sample
 ```
 
-output:
+execute:
+
+```bash
+arq --data=knowledge.rdf --query=data/query.samples.01.sparql > TMP/samples.01.out
+```
+
+output [TMP/samples.01.out](TMP/samples.01.out):
 
 ```
 ------------------------------------------------------------------------------------------
@@ -347,9 +422,77 @@ output:
 ```
 
 
+
+
 ## Example
 
-> find the bam , their reference, samples , etc.. 
+> List all the `VCF` files and their samples, at least containing the sample "S1"
+
+
+
+query [data/query.vcfs.01.sparql](data/query.vcfs.01.sparql) :
+
+```sparql
+(...)
+
+SELECT DISTINCT ?vcfPath ?fasta ?taxonName ?sampleName
+WHERE {
+  ?vcf a u:Vcf .
+  ?vcf u:filename ?vcfPath .
+
+   ?vcf u:sample ?sample1 .
+   ?sample1 a foaf:Person .
+   ?sample1 foaf:name "S1" .
+
+   ?vcf u:sample ?sample2 .
+   ?sample2 a foaf:Person .
+   ?sample2 foaf:name ?sampleName .
+
+  OPTIONAL {
+	?vcf u:reference ?ref .
+	?ref a u:Reference .
+	?ref u:filename ?fasta
+
+	OPTIONAL {
+		?ref u:taxon ?taxon .
+		?taxon a u:Taxon .
+		?taxon dc:title ?taxonName .
+		}
+	}
+
+}
+```
+
+execute:
+
+```bash
+arq --data=knowledge.rdf --query=data/query.vcfs.01.sparql > TMP/vcfs.01.out
+```
+
+output [TMP/vcfs.01.out](TMP/vcfs.01.out):
+
+```
+--------------------------------------------------------------------------
+| vcfPath              | fasta             | taxonName      | sampleName |
+==========================================================================
+| "data/variants2.vcf" | "data/hg19.fasta" | "Homo Sapiens" | "S1"       |
+| "data/variants2.vcf" | "data/hg19.fasta" | "Homo Sapiens" | "S2"       |
+| "data/variants2.vcf" | "data/hg19.fasta" | "Homo Sapiens" | "S3"       |
+| "data/variants1.vcf" | "data/hg38.fasta" | "Homo Sapiens" | "S1"       |
+| "data/variants1.vcf" | "data/hg38.fasta" | "Homo Sapiens" | "S5"       |
+| "data/variants1.vcf" | "data/hg38.fasta" | "Homo Sapiens" | "S2"       |
+| "data/variants1.vcf" | "data/hg38.fasta" | "Homo Sapiens" | "S3"       |
+--------------------------------------------------------------------------
+```
+
+
+
+
+## Example
+
+> find the bam , their reference, samples , etc..
+
+
 
 query [data/query.bams.01.sparql](data/query.bams.01.sparql) :
 
@@ -369,7 +512,6 @@ SELECT DISTINCT ?bamPath
 WHERE {
   ?bam a u:Bam .
   ?bam u:filename ?bamPath .
-  OPTIONAL {?bam u:sequencing-type ?bamType }.
 
   OPTIONAL {
 	?bam u:reference ?ref .
@@ -420,7 +562,13 @@ WHERE {
 GROUP BY  ?bamPath
 ```
 
-output:
+execute:
+
+```bash
+arq --data=knowledge.rdf --query=data/query.bams.01.sparql > TMP/bams.01.out
+```
+
+output [TMP/bams.01.out](TMP/bams.01.out):
 
 ```
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -434,6 +582,8 @@ output:
 | "/home/lindenb/src/hts-rdf/data/S1.grch37.bam" | "data/hg19.fasta"      | "Homo Sapiens" | "S1"          | "Fam01"   | "female"  | "Turner Syndrome;COVID-19" | "S3"      | "S2"      |             |
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ```
+
+
 
 
 # The Graph

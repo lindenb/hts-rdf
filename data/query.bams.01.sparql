@@ -20,7 +20,6 @@ SELECT DISTINCT ?bamPath
 WHERE {
   ?bam a u:Bam .
   ?bam u:filename ?bamPath .
-  OPTIONAL {?bam u:sequencing-type ?bamType }.
 
   OPTIONAL {
 	?bam u:reference ?ref .

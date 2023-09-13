@@ -2,6 +2,29 @@ m4_define(`md_pre', m4_changequote([,])[m4_changequote([,])```[$1]m4_changequote
 m4_define(`md_code', m4_changequote([,])[m4_changequote([,])`[$1]`m4_changequote(`,')]m4_changequote(`,'))m4_dnl
 m4_define(`anchor',`[$1]($2)')m4_dnl
 m4_define(`localfile',`anchor($1,$1)')m4_dnl
+m4_define(`sparql_example',`
+
+query localfile($1) :
+
+md_pre(sparql)
+(...)
+m4_syscmd(grep -v ^PREFIX  $1)m4_dnl
+md_pre
+
+execute:
+
+md_pre(bash)
+arq --data=knowledge.rdf --query=$1 > $2
+md_pre
+
+output localfile($2):
+
+md_pre
+m4_syscmd(cat $2)m4_dnl
+md_pre
+
+
+')m4_dnl
 # hts-rdf
 
 Author: Pierre Lindenbaum PhD.
@@ -9,6 +32,7 @@ Author: Pierre Lindenbaum PhD.
 
 Here are a few notes about Managing  sequencing data with RDF. I want to keep track of the samples, BAMs, references, diseases etc..  used in my lab.
 
+  - This document is auto-generated using localfile(Makefile). Do not edit it.
   - I don't want to use a sql database.
   - I don't want to join too many tab delimited files.
   - I want to use a controlled vocabulary to define things like a disease, etc...
@@ -16,6 +40,7 @@ Here are a few notes about Managing  sequencing data with RDF. I want to keep tr
   - I use the md_code(RDF+XML) notation because I 'm used to work with md_code(XML).
   - I create a namespace for my lab:  md_code(https://umr1087.univ-nantes.fr/rdf/) and a md_code(XML) entity for this namespace: md_code(&u1087;).
   - I tried to reuse existing ontologies (e.g. md_code(foaf:Person) for samples) as much as I can, but sometimes I created my own classes and properties.
+  - I'm not an expert of md_code(SPARQL) or md_code(RDF)
 
 
 # Building the RDF GRAPH
@@ -76,9 +101,53 @@ md_pre(rdf)
 m4_syscmd(tail -n+24  data/samples.rdf)m4_dnl
 md_pre
 
+## VCF BCF
+
+### VCF and genomes
+
+for md_code(VCF) files, we need to associate a VCF and the reference genome:
+We can extract the md_code(chromosome) and md_code(length) of the references, we calculate the  md_code(md5) checksum and we sort on  md_code(md5).
+
+md_pre(bash)
+tail -n+2 data/references.tsv | sort -T TMP -t $'\t' -k1,1 > TMP/sorted.refs.txt
+cut -f 1 TMP/sorted.refs.txt | while read FA; do echo -ne "${FA}\t" && cut -f 1,2 "${FA}.fai" | md5sum | cut -d ' ' -f 1; done > TMP/references.md5.tmp.a
+join -t $'\t' -1 1 -2 1  TMP/sorted.refs.txt TMP/references.md5.tmp.a | sort -t $'\t' -k5,5 > TMP/references.md5
+rm -f  TMP/references.md5.tmp.a
+md_pre
+
+For each VCF, the header is extracted, we extract the the md_code(chromosome) and md_code(length) of the '##contig' lines, we calculate the  md_code(md5) checksum and we sort on  md_code(md5).
+
+md_pre(bash)
+find data -type f \( -name "*.vcf.gz" -o -name "*.bcf" -o -name "*.vcf" \) | sort > TMP/vcfs.txt
+(cat TMP/vcfs.txt| while read V ; \
+		do echo -en "${V}\t" && \
+		bcftools view --header-only "${V}"  | awk  -F '[=,<>]' '/^##contig/ {printf("%s\t%s\n",$4,$6);}'   | md5sum | cut -d ' ' -f1 ; done) | sort -t $'\t' -k2,2 > TMP/vcfs.md5.txt
+md_pre
+
+we join both files on md_code(md5) and we convert to md_code(RDF) using md_code(awk):
+
+md_pre(bash)
+cat data/header.rdf.part > TMP/vcf2ref.rdf
+join -t $'\t' -1 2 -2 5 TMP/vcfs.md5.txt TMP/references.md5 |\
+	awk -F '\t' '{printf("<u:Vcf rdf:about=\"file://%s\"><u:filename>%s</u:filename><u:reference rdf:resource=\"&u1087;references/%s\"/></u:Vcf>",$2,$2,$4); }' >> TMP/vcf2ref.rdf
+cat data/footer.rdf.part >> TMP/vcf2ref.rdf
+md_pre
+
+### VCF and samples
+
+to link the  md_code(VCF) files and the  sample, we use  md_code(bcftools query -l) to extract the samples and we convert to md_code(RDF) using md_code(awk):
+
+md_pre(bash)
+find data -type f \( -name "*.vcf.gz" -o -name "*.bcf" -o -name "*.vcf" \) | sort > TMP/vcfs.txt
+cat data/header.rdf.part > TMP/vcf2samples.rdf
+cat TMP/vcfs.txt | while read F; do bcftools query -l "${F}" | awk -vVCF="$F" 'BEGIN {printf("<u:Vcf rdf:about=\"file://%s\"><u:filename>%s</u:filename>",VCF,VCF); } {printf("<u:sample rdf:resource=\"&u1087;samples/%s\"/>",$1);} END {printf("</u:Vcf>");}' >> TMP/vcf2samples.rdf ; done
+cat data/footer.rdf.part >> TMP/vcf2samples.rdf
+md_pre
+
+
 ## BAM files
 
-BAM file contains the sample names in their read-groups; We use md_code(samtools samples) to extract the samples, the reference and the path of each BAM file.
+md_code(BAM) file contains the sample names in their read-groups; We use md_code(samtools samples) to extract the samples, the reference and the path of each md_code(BAM) file.
 localfile(data/samtools.samples.to.rdf.awk) is used to convert the output of md_code(samtools samples)  to md_code(RDF).
 
 
@@ -124,72 +193,31 @@ md_pre
 
 > show me the species that are a sub-taxon of "Homo"
 
-query localfile(data/query.species.01.sparql):
-
-md_pre(sparql)
-(...)
-m4_syscmd(grep -v ^PREFIX  data/query.species.01.sparql)m4_dnl
-md_pre
-
-output:
-
-md_pre
-m4_syscmd(cat  TMP/species.01.out)m4_dnl
-md_pre
+sparql_example(data/query.species.01.sparql,TMP/species.01.out)
 
 ## Example
 
 > show the diseases that are a sub disease of **COVID-19**.
 
-query localfile(data/query.diseases.01.sparql):
-
-md_pre(sparql)
-(...)
-m4_syscmd(grep -v ^PREFIX  data/query.diseases.01.sparql)m4_dnl
-md_pre
-
-output:
-
-md_pre
-m4_syscmd(cat  TMP/diseases.01.out)m4_dnl
-md_pre
-
+sparql_example(data/query.diseases.01.sparql,TMP/diseases.01.out)
 
 ## Example
 
 > find the samples , their children, parents , diseases
 
-query localfile(data/query.samples.01.sparql) :
-
-md_pre(sparql)
-(...)
-m4_syscmd(grep -v ^PREFIX  data/query.samples.01.sparql)m4_dnl
-md_pre
-
-output:
-
-md_pre
-m4_syscmd(cat  TMP/samples.01.out)m4_dnl
-md_pre
-
+sparql_example(data/query.samples.01.sparql,TMP/samples.01.out)
 
 ## Example
 
-> find the bam , their reference, samples , etc.. 
+> List all the md_code(VCF) files and their samples, at least containing the sample "S1"
 
-query localfile(data/query.bams.01.sparql) :
+sparql_example(data/query.vcfs.01.sparql,TMP/vcfs.01.out)
 
-md_pre(sparql)
-(...)
-m4_syscmd(grep -v ^PREFIX  data/query.bams.01.sparql)m4_dnl
-md_pre
+## Example
 
-output:
+> find the bam , their reference, samples , etc..
 
-md_pre
-m4_syscmd(cat  TMP/bams.01.out)m4_dnl
-md_pre
-
+sparql_example(data/query.bams.01.sparql,TMP/bams.01.out)
 
 # The Graph
 

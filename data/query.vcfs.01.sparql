@@ -1,0 +1,35 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX u: <https://umr1087.univ-nantes.fr/rdf/>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rel: <http://purl.org/vocab/relationship/> 
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+
+SELECT DISTINCT ?vcfPath ?fasta ?taxonName ?sampleName
+WHERE {
+  ?vcf a u:Vcf .
+  ?vcf u:filename ?vcfPath .
+
+   ?vcf u:sample ?sample1 .
+   ?sample1 a foaf:Person .
+   ?sample1 foaf:name "S1" .
+
+   ?vcf u:sample ?sample2 .
+   ?sample2 a foaf:Person .
+   ?sample2 foaf:name ?sampleName .
+
+  OPTIONAL {
+	?vcf u:reference ?ref .
+	?ref a u:Reference .
+	?ref u:filename ?fasta
+
+	OPTIONAL {
+		?ref u:taxon ?taxon .
+		?taxon a u:Taxon .
+		?taxon dc:title ?taxonName .
+		}
+	}
+
+}
