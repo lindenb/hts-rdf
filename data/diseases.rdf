@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!DOCTYPE rdf:RDF [
+<!ENTITY u1087 "https://umr1087.univ-nantes.fr/rdf/">
+]>
+<rdf:RDF xmlns="http://purl.obolibrary.org/obo/doid/doid-non-classified.owl#"
+     xml:base="http://purl.obolibrary.org/obo/doid/doid-non-classified.owl"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:obo="http://purl.obolibrary.org/obo/"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:doid="http://purl.obolibrary.org/obo/doid#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+     xmlns:terms="http://purl.org/dc/terms/"
+     xmlns:foaf="http://xmlns.com/foaf/0.1/"
+     xmlns:rel="http://purl.org/vocab/relationship/" 
+     xmlns:oboInOwl="http://www.geneontology.org/formats/oboInOwl#"
+     xmlns:taxon="http://purl.uniprot.org/taxonomy"
+     xmlns:u="https://umr1087.univ-nantes.fr/rdf/"
+>
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_0080599">
+        <rdfs:label>Coronavirus infectious disease</rdfs:label>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_0080600">
+        <rdfs:label>COVID-19</rdfs:label>
+	<rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_0080599"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_0081013">
+	<rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_0080600"/>
+        <rdfs:label>Severe COVID-19</rdfs:label>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_3491">
+        <rdfs:label>Turner Syndrome</rdfs:label>
+    </owl:Class>
+
+</rdf:RDF>

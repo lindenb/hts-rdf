@@ -1,0 +1,71 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX u: <https://umr1087.univ-nantes.fr/rdf/>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rel: <http://purl.org/vocab/relationship/> 
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+
+SELECT DISTINCT ?bamPath
+		(SAMPLE(?fasta) as ?colFasta)
+		(SAMPLE(?taxonName) as ?colTaxon)
+		(SAMPLE(?sampleName) as ?colSmpleName )
+		(GROUP_CONCAT(DISTINCT ?groupName; SEPARATOR=";") as ?colGroups )
+		(GROUP_CONCAT(DISTINCT ?gender; SEPARATOR=";") as ?colGender )
+		(GROUP_CONCAT(DISTINCT ?diseaseName; SEPARATOR=";") as ?colDiseases)
+		(SAMPLE(?fatherName) as ?colFather )
+		(SAMPLE(?motherName)  as ?colMother)
+		(GROUP_CONCAT(DISTINCT ?childName; SEPARATOR="; ") as ?colChildren)
+WHERE {
+  ?bam a u:Bam .
+  ?bam u:filename ?bamPath .
+  OPTIONAL {?bam u:sequencing-type ?bamType }.
+
+  OPTIONAL {
+	?bam u:reference ?ref .
+	?ref a u:Reference .
+	?ref u:filename ?fasta
+
+	OPTIONAL {
+		?ref u:taxon ?taxon .
+		?taxon a u:Taxon .
+		?taxon dc:title ?taxonName .
+		}
+	}
+
+  OPTIONAL {
+	?bam u:sample ?sample .
+	?sample a foaf:Person .
+	OPTIONAL {?sample foaf:name ?sampleName .}
+	OPTIONAL {?sample foaf:gender ?gender .}
+	OPTIONAL {
+		?group foaf:member ?sample .
+		?group a foaf:Group .
+		?group foaf:name ?groupName .
+		} .
+	OPTIONAL {
+		?sample u:has-disease ?disease .
+		?disease a owl:Class .
+		?disease rdfs:label ?diseaseName .
+		} .
+	OPTIONAL {
+		?father a foaf:Person .
+		?sample rel:childOf ?father .
+		?father foaf:gender "male" .
+		?father foaf:name ?fatherName .
+		} .
+	OPTIONAL {
+		?mother a foaf:Person .
+		?sample rel:childOf ?mother .
+		?mother foaf:gender "female" .
+		?mother foaf:name ?motherName .
+		} .
+	OPTIONAL {
+		?child a foaf:Person .
+		?child rel:childOf ?sample .
+		?child foaf:name ?childName .
+		} .
+	}.
+}
+GROUP BY  ?bamPath

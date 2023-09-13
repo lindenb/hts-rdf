@@ -1,0 +1,45 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rel: <http://purl.org/vocab/relationship/>
+PREFIX u: <https://umr1087.univ-nantes.fr/rdf/>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+
+SELECT DISTINCT
+		(SAMPLE(?sampleName) as ?colName)
+		(SAMPLE(?gender) as ?colGender )
+		(SAMPLE(?fatherName) as ?colFather )
+		(SAMPLE(?motherName)  as ?colMother)
+		(GROUP_CONCAT(DISTINCT ?childName; SEPARATOR=";") as ?colChildren)
+		(GROUP_CONCAT(DISTINCT ?diseaseName; SEPARATOR=";") as ?colDiseases)
+		
+WHERE {
+	?sample a foaf:Person .
+	?sample foaf:name ?sampleName .
+	OPTIONAL {?sample foaf:gender ?gender .}
+	OPTIONAL {
+		?sample u:has-disease ?disease .
+		?disease a owl:Class .
+		?disease rdfs:label ?diseaseName .
+		} .
+	OPTIONAL {
+		?father a foaf:Person .
+		?sample rel:childOf ?father .
+		?father foaf:gender "male" .
+		?father foaf:name ?fatherName .
+		} .
+	OPTIONAL {
+		?mother a foaf:Person .
+		?sample rel:childOf ?mother .
+		?mother foaf:gender "female" .
+		?mother foaf:name ?motherName .
+		} .
+	OPTIONAL {
+		?child a foaf:Person .
+		?child rel:childOf ?sample .
+		?child foaf:name ?childName .
+		} .
+}
+GROUP BY  ?sample

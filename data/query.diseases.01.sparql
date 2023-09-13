@@ -1,0 +1,17 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rel: <http://purl.org/vocab/relationship/>
+PREFIX u: <https://umr1087.univ-nantes.fr/rdf/>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+
+SELECT DISTINCT ?diseaseName
+WHERE {
+	?disease rdfs:label ?diseaseName .
+	?disease a owl:Class .
+	?disease rdfs:subClassOf* ?root .
+	?root a owl:Class .
+	?root rdfs:label "COVID-19" .
+}
