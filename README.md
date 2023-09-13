@@ -63,7 +63,7 @@ We will use `rdf:subClassOf` to find organisms that are a sub-species of a taxon
 ```
 
 
-## Diseases
+## Diseases / Phenotypes
 
 I manually wrote [data/diseases.rdf](data/diseases.rdf) defining the diseases used in my lab.
 We will use `rdf:subClassOf` to find organisms that are a sub-disease in a disease ontology tree.
@@ -220,7 +220,7 @@ cat data/footer.rdf.part >> TMP/vcf2samples.rdf
 
 ## BAM files
 
-`BAM` file contains the sample names in their read-groups; We use `samtools samples` to extract the samples, the reference and the path of each `BAM` file.
+`BAM` files contain the sample names in their read-groups; We use `samtools samples` to extract the samples, the reference and the path of each `BAM` file.
 [data/samtools.samples.to.rdf.awk](data/samtools.samples.to.rdf.awk) is used to convert the output of `samtools samples`  to `RDF`.
 
 
@@ -490,7 +490,7 @@ output [TMP/vcfs.01.out](TMP/vcfs.01.out):
 
 ## Example
 
-> find the bam , their reference, samples , etc..
+> find the `BAM` files , their references, samples , etc..
 
 
 
