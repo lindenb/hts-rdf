@@ -1,0 +1,16 @@
+cff-version: "1.1.0"
+abstract: "Managing sequencing data with RDF"
+authors: 
+  - family-names: "Lindenbaum"
+    given-names: "Pierre"
+    orcid: "https://orcid.org/0000-0003-0148-9787"
+keywords: 
+  - bioinformatics
+  - rdf
+  - hts
+  - sparql
+license: MIT
+message: "If you use this code, please cite it using these metadata."
+repository-code: "http://github.com/lindenb/hts-rdf"
+title: hts-rdf
+version: " 2023.09.13"
