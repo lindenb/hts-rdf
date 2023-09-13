@@ -359,7 +359,7 @@ query [data/query.bams.01.sparql](data/query.bams.01.sparql) :
 SELECT DISTINCT ?bamPath
 		(SAMPLE(?fasta) as ?colFasta)
 		(SAMPLE(?taxonName) as ?colTaxon)
-		(SAMPLE(?sampleName) as ?colSmpleName )
+		(SAMPLE(?sampleName) as ?colSampleName )
 		(GROUP_CONCAT(DISTINCT ?groupName; SEPARATOR=";") as ?colGroups )
 		(GROUP_CONCAT(DISTINCT ?gender; SEPARATOR=";") as ?colGender )
 		(GROUP_CONCAT(DISTINCT ?diseaseName; SEPARATOR=";") as ?colDiseases)
@@ -423,16 +423,16 @@ GROUP BY  ?bamPath
 output:
 
 ```
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-| bamPath                                        | colFasta               | colTaxon       | colSmpleName | colGroups | colGender | colDiseases                | colFather | colMother | colChildren |
-======================================================================================================================================================================================================
-| "/home/lindenb/src/hts-rdf/data/S1.grch38.bam" | "data/hg38.fasta"      | "Homo Sapiens" | "S1"         | "Fam01"   | "female"  | "Turner Syndrome;COVID-19" | "S3"      | "S2"      |             |
-| "/home/lindenb/src/hts-rdf/data/S2.grch37.bam" | "data/hg19.fasta"      | "Homo Sapiens" | "S2"         | "Fam01"   | "female"  |                            |           |           | "S1"        |
-| "/home/lindenb/src/hts-rdf/data/S4.RF.bam"     | "data/rotavirus_rf.fa" | "Rotavirus"    | "S4"         |           |           |                            |           |           |             |
-| "/home/lindenb/src/hts-rdf/data/S5.grch38.bam" | "data/hg38.fasta"      | "Homo Sapiens" | "S5"         | "Fam01"   |           |                            |           |           |             |
-| "/home/lindenb/src/hts-rdf/data/S3.grch38.bam" | "data/hg38.fasta"      | "Homo Sapiens" | "S3"         | "Fam01"   | "male"    | "Severe COVID-19"          |           |           | "S1"        |
-| "/home/lindenb/src/hts-rdf/data/S1.grch37.bam" | "data/hg19.fasta"      | "Homo Sapiens" | "S1"         | "Fam01"   | "female"  | "Turner Syndrome;COVID-19" | "S3"      | "S2"      |             |
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| bamPath                                        | colFasta               | colTaxon       | colSampleName | colGroups | colGender | colDiseases                | colFather | colMother | colChildren |
+=======================================================================================================================================================================================================
+| "/home/lindenb/src/hts-rdf/data/S1.grch38.bam" | "data/hg38.fasta"      | "Homo Sapiens" | "S1"          | "Fam01"   | "female"  | "Turner Syndrome;COVID-19" | "S3"      | "S2"      |             |
+| "/home/lindenb/src/hts-rdf/data/S2.grch37.bam" | "data/hg19.fasta"      | "Homo Sapiens" | "S2"          | "Fam01"   | "female"  |                            |           |           | "S1"        |
+| "/home/lindenb/src/hts-rdf/data/S4.RF.bam"     | "data/rotavirus_rf.fa" | "Rotavirus"    | "S4"          |           |           |                            |           |           |             |
+| "/home/lindenb/src/hts-rdf/data/S5.grch38.bam" | "data/hg38.fasta"      | "Homo Sapiens" | "S5"          | "Fam01"   |           |                            |           |           |             |
+| "/home/lindenb/src/hts-rdf/data/S3.grch38.bam" | "data/hg38.fasta"      | "Homo Sapiens" | "S3"          | "Fam01"   | "male"    | "Severe COVID-19"          |           |           | "S1"        |
+| "/home/lindenb/src/hts-rdf/data/S1.grch37.bam" | "data/hg19.fasta"      | "Homo Sapiens" | "S1"          | "Fam01"   | "female"  | "Turner Syndrome;COVID-19" | "S3"      | "S2"      |             |
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ```
 
 

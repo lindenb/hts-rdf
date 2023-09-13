@@ -10,7 +10,7 @@ PREFIX dc: <http://purl.org/dc/elements/1.1/>
 SELECT DISTINCT ?bamPath
 		(SAMPLE(?fasta) as ?colFasta)
 		(SAMPLE(?taxonName) as ?colTaxon)
-		(SAMPLE(?sampleName) as ?colSmpleName )
+		(SAMPLE(?sampleName) as ?colSampleName )
 		(GROUP_CONCAT(DISTINCT ?groupName; SEPARATOR=";") as ?colGroups )
 		(GROUP_CONCAT(DISTINCT ?gender; SEPARATOR=";") as ?colGender )
 		(GROUP_CONCAT(DISTINCT ?diseaseName; SEPARATOR=";") as ?colDiseases)
