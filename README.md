@@ -257,7 +257,7 @@ the output:
 [jena/rio](https://jena.apache.org/) is used to merge `RDF` files into [knowledge.rdf](knowledge.rdf)
 
 ```bash
-riot --formatted=RDFXML TMP/references.rdf data/species.rdf TMP/bams.rdf data/diseases.rdf data/samples.rdf > knowledge.rdf
+riot --formatted=RDFXML TMP/references.rdf data/species.rdf TMP/bams.rdf data/diseases.rdf data/samples.rdf TMP/vcf2ref.rdf TMP/vcf2samples.rdf > knowledge.rdf
 ```
 
 
