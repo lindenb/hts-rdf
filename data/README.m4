@@ -41,7 +41,7 @@ Here are a few notes about Managing  sequencing data with RDF. I want to keep tr
   - I created a namespace for my lab:  md_code(https://umr1087.univ-nantes.fr/rdf/) and a md_code(XML) entity for this namespace: md_code(&u1087;).
   - I tried to reuse existing ontologies (e.g. md_code(foaf:Person) for samples) as much as I can, but sometimes I created my own classes and properties.
   - I'm not an expert of md_code(SPARQL) or md_code(RDF)
-  - Required tools are (jena)[https://jena.apache.org/download/], md_code(bcftools= (for md_code(VCFs)), md_code(samtools) (for md_code(BAMs)), md_code(awk).
+  - Required tools are (jena)[https://jena.apache.org/download/], md_code(bcftools) (for md_code(VCFs)), md_code(samtools) (for md_code(BAMs)), md_code(awk).
 
 
 # Building the RDF GRAPH
@@ -57,6 +57,9 @@ m4_syscmd(tail -n+24  data/species.rdf)m4_dnl
 md_pre
 
 
+![data/species.svg](data/species.svg)
+
+
 ## Diseases / Phenotypes
 
 I manually wrote localfile(data/diseases.rdf) defining the diseases used in my lab.
@@ -66,6 +69,9 @@ md_pre(rdf)
 (...)
 m4_syscmd(tail -n+24  data/diseases.rdf)m4_dnl
 md_pre
+
+
+![data/diseases.svg](data/diseases.svg)
 
 
 ## References / FASTA / Genomes
@@ -107,7 +113,7 @@ md_pre
 
 ### VCF and genomes
 
-for md_code(VCF) files, we need to associate a md_code(VCF) and the reference genome:
+for each md_code(VCF) files, we need to associate a md_code(VCF) and the reference genome:
 md_code(Chromosome) and md_code(length) are extracted from the references, we calculate the  md_code(md5) checksum and we sort on  md_code(md5).
 
 md_pre(bash)
@@ -117,7 +123,7 @@ join -t $'\t' -1 1 -2 1  TMP/sorted.refs.txt TMP/references.md5.tmp.a | sort -t 
 rm -f  TMP/references.md5.tmp.a
 md_pre
 
-For each md_code(VCF), the header is extracted, we extract the the md_code(chromosome) and md_code(length) of the md_code(contig) lines, we calculate the md_code(md5) checksum and we sort on  md_code(md5).
+For each md_code(VCF), the header is extracted, we extract the md_code(chromosome) and md_code(length) of the md_code(contig) lines, we calculate the md_code(md5) checksum and we sort on  md_code(md5).
 
 md_pre(bash)
 find data -type f \( -name "*.vcf.gz" -o -name "*.bcf" -o -name "*.vcf" \) | sort > TMP/vcfs.txt

@@ -15,19 +15,31 @@ all: README.md
 README.md : data/README.m4 \
 		knowledge.rdf \
 		knowledge.svg \
+		data/diseases.svg \
+		data/species.svg \
 		TMP/species.01.out \
 		TMP/diseases.01.out \
 		TMP/samples.01.out \
 		TMP/bams.01.out \
 		TMP/vcfs.01.out \
 		TMP/references.rdf
-	m4 -P < $< > $@
+	m4 -P < $< > $(addsuffix .tmp,$@)
+	mv $(addsuffix .tmp,$@) $@
 
 
 
 knowledge.svg : knowledge.rdf
 	mkdir -p $(dir $@)
 	java -jar $(JSANDBOX)/dist/rdf2graph.jar $<  | dot -T svg -o $@
+
+data/diseases.svg : data/diseases.rdf
+	mkdir -p $(dir $@)
+	java -jar $(JSANDBOX)/dist/rdf2graph.jar $<  | dot -T svg -o $@
+
+data/species.svg : data/species.rdf
+	mkdir -p $(dir $@)
+	java -jar $(JSANDBOX)/dist/rdf2graph.jar $<  | dot -T svg -o $@
+
 
 
 TMP/species.01.out: knowledge.rdf data/query.species.01.sparql
@@ -53,6 +65,7 @@ TMP/vcfs.01.out: knowledge.rdf data/query.vcfs.01.sparql
 
 knowledge.rdf : TMP/references.rdf data/species.rdf TMP/bams.rdf TMP/bams.rdf data/diseases.rdf data/samples.rdf TMP/vcf2ref.rdf  TMP/vcf2samples.rdf
 	$(JENA_BIN_DIR)/riot --formatted=RDFXML $^ > $@
+
 
 
 #

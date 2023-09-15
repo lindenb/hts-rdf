@@ -5,15 +5,16 @@ Author: Pierre Lindenbaum PhD.
 
 Here are a few notes about Managing  sequencing data with RDF. I want to keep track of the samples, BAMs, references, diseases etc..  used in my lab.
 
-  - This document is auto-generated using [Makefile](Makefile). Do not edit it.
-  - I don't want to use a sql database.
+  - This document is auto-generated using a [Makefile](Makefile). Do not edit it.
+  - I don't want to use a `SQL` database.
   - I don't want to join too many tab delimited files.
-  - I want to use a controlled vocabulary to define things like a disease, etc...
-  - In this document I won't explain what are `RDF` or `SPARQL`.
+  - I want to use a controlled vocabulary to define things like diseases, organims, etc...
+  - This document is NOT a tutorial for `RDF` or `SPARQL`.
   - I use the `RDF+XML` notation because I 'm used to work with `XML`.
-  - I create a namespace for my lab:  `https://umr1087.univ-nantes.fr/rdf/` and a `XML` entity for this namespace: `&u1087;`.
+  - I created a namespace for my lab:  `https://umr1087.univ-nantes.fr/rdf/` and a `XML` entity for this namespace: `&u1087;`.
   - I tried to reuse existing ontologies (e.g. `foaf:Person` for samples) as much as I can, but sometimes I created my own classes and properties.
   - I'm not an expert of `SPARQL` or `RDF`
+  - Required tools are (jena)[https://jena.apache.org/download/], `bcftools` (for `VCFs`), `samtools` (for `BAMs`), `awk`.
 
 
 # Building the RDF GRAPH
@@ -63,10 +64,13 @@ We will use `rdf:subClassOf` to find organisms that are a sub-species of a taxon
 ```
 
 
+![data/species.svg](data/species.svg)
+
+
 ## Diseases / Phenotypes
 
 I manually wrote [data/diseases.rdf](data/diseases.rdf) defining the diseases used in my lab.
-We will use `rdf:subClassOf` to find organisms that are a sub-disease in a disease ontology tree.
+We will use `rdf:subClassOf` to find diseases that are a sub-disease in a disease ontology tree.
 
 ```rdf
 (...)
@@ -92,9 +96,13 @@ We will use `rdf:subClassOf` to find organisms that are a sub-disease in a disea
 ```
 
 
+![data/diseases.svg](data/diseases.svg)
+
+
 ## References / FASTA / Genomes
 
-I manually wrote [data/references.tsv](data/references.tsv) a tab delimited text file defining each FASTA reference genome available on my cluster. The taxon id will be used to retrive the species associated to a FASTA file.
+I manually wrote [data/references.tsv](data/references.tsv) a tab delimited text file defining each `FASTA` reference genome available on my cluster.
+The taxon id will be used to retrive the species associated to a `FASTA` file.
 
 ```
 #path                 genomeId   ucsc  taxid
@@ -103,7 +111,7 @@ data/hg38.fasta       grch38     hg38  9606
 data/rotavirus_rf.fa  rotavirus        10912
 ```
 
-using awk, the table is transformed into **RDF**:
+The table is transformed into `RDF` using `awk`:
 
 ```bash
 tail -n+2 data/references.tsv |\
@@ -178,8 +186,8 @@ The Class `foaf:Group` is used to create a group of samples.
 
 ### VCF and genomes
 
-for `VCF` files, we need to associate a VCF and the reference genome:
-We can extract the `chromosome` and `length` of the references, we calculate the  `md5` checksum and we sort on  `md5`.
+for each `VCF` files, we need to associate a `VCF` and the reference genome:
+`Chromosome` and `length` are extracted from the references, we calculate the  `md5` checksum and we sort on  `md5`.
 
 ```bash
 tail -n+2 data/references.tsv | sort -T TMP -t $'\t' -k1,1 > TMP/sorted.refs.txt
@@ -188,7 +196,7 @@ join -t $'\t' -1 1 -2 1  TMP/sorted.refs.txt TMP/references.md5.tmp.a | sort -t 
 rm -f  TMP/references.md5.tmp.a
 ```
 
-For each VCF, the header is extracted, we extract the the `chromosome` and `length` of the `contig` lines, we calculate the `md5` checksum and we sort on  `md5`.
+For each `VCF`, the header is extracted, we extract the `chromosome` and `length` of the `contig` lines, we calculate the `md5` checksum and we sort on  `md5`.
 
 ```bash
 find data -type f \( -name "*.vcf.gz" -o -name "*.bcf" -o -name "*.vcf" \) | sort > TMP/vcfs.txt
@@ -220,7 +228,7 @@ cat data/footer.rdf.part >> TMP/vcf2samples.rdf
 
 ## BAM files
 
-`BAM` files contain the sample names in their read-groups; We use `samtools samples` to extract the samples, the reference and the path of each `BAM` file.
+`BAM` file contains the sample names in their read-groups; We use `samtools samples` to extract the samples, the reference and the path of each `BAM` file.
 [data/samtools.samples.to.rdf.awk](data/samtools.samples.to.rdf.awk) is used to convert the output of `samtools samples`  to `RDF`.
 
 
@@ -490,7 +498,7 @@ output [TMP/vcfs.01.out](TMP/vcfs.01.out):
 
 ## Example
 
-> find the `BAM` files , their references, samples , etc..
+> find the bam , their reference, samples , etc..
 
 
 
@@ -588,6 +596,6 @@ output [TMP/bams.01.out](TMP/bams.01.out):
 
 # The Graph
 
-and here is the RDF graph
+and here is the `RDF` graph as a `SVG` document:
 
 ![knowledge.svg](knowledge.svg)
