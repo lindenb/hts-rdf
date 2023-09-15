@@ -32,15 +32,16 @@ Author: Pierre Lindenbaum PhD.
 
 Here are a few notes about Managing  sequencing data with RDF. I want to keep track of the samples, BAMs, references, diseases etc..  used in my lab.
 
-  - This document is auto-generated using localfile(Makefile). Do not edit it.
-  - I don't want to use a sql database.
+  - This document is auto-generated using a localfile(Makefile). Do not edit it.
+  - I don't want to use a md_code(SQL) database.
   - I don't want to join too many tab delimited files.
-  - I want to use a controlled vocabulary to define things like a disease, etc...
-  - In this document I won't explain what are md_code(RDF) or md_code(SPARQL).
+  - I want to use a controlled vocabulary to define things like diseases, organims, etc...
+  - This document is NOT a tutorial for md_code(RDF) or md_code(SPARQL).
   - I use the md_code(RDF+XML) notation because I 'm used to work with md_code(XML).
-  - I create a namespace for my lab:  md_code(https://umr1087.univ-nantes.fr/rdf/) and a md_code(XML) entity for this namespace: md_code(&u1087;).
+  - I created a namespace for my lab:  md_code(https://umr1087.univ-nantes.fr/rdf/) and a md_code(XML) entity for this namespace: md_code(&u1087;).
   - I tried to reuse existing ontologies (e.g. md_code(foaf:Person) for samples) as much as I can, but sometimes I created my own classes and properties.
   - I'm not an expert of md_code(SPARQL) or md_code(RDF)
+  - Required tools are (jena)[https://jena.apache.org/download/], md_code(bcftools= (for md_code(VCFs)), md_code(samtools) (for md_code(BAMs)), md_code(awk).
 
 
 # Building the RDF GRAPH
@@ -56,10 +57,10 @@ m4_syscmd(tail -n+24  data/species.rdf)m4_dnl
 md_pre
 
 
-## Diseases
+## Diseases / Phenotypes
 
 I manually wrote localfile(data/diseases.rdf) defining the diseases used in my lab.
-We will use md_code(rdf:subClassOf) to find organisms that are a sub-disease in a disease ontology tree.
+We will use md_code(rdf:subClassOf) to find diseases that are a sub-disease in a disease ontology tree.
 
 md_pre(rdf)
 (...)
@@ -69,13 +70,14 @@ md_pre
 
 ## References / FASTA / Genomes
 
-I manually wrote localfile(data/references.tsv) a tab delimited text file defining each FASTA reference genome available on my cluster. The taxon id will be used to retrive the species associated to a FASTA file.
+I manually wrote localfile(data/references.tsv) a tab delimited text file defining each md_code(FASTA) reference genome available on my cluster.
+The taxon id will be used to retrive the species associated to a md_code(FASTA) file.
 
 md_pre
 m4_syscmd(cat data/references.tsv | column -t -s '	')m4_dnl
 md_pre
 
-using awk, the table is transformed into **RDF**:
+The table is transformed into md_code(RDF) using md_code(awk):
 
 md_pre(bash)
 tail -n+2 data/references.tsv |\
@@ -105,8 +107,8 @@ md_pre
 
 ### VCF and genomes
 
-for md_code(VCF) files, we need to associate a VCF and the reference genome:
-We can extract the md_code(chromosome) and md_code(length) of the references, we calculate the  md_code(md5) checksum and we sort on  md_code(md5).
+for md_code(VCF) files, we need to associate a md_code(VCF) and the reference genome:
+md_code(Chromosome) and md_code(length) are extracted from the references, we calculate the  md_code(md5) checksum and we sort on  md_code(md5).
 
 md_pre(bash)
 tail -n+2 data/references.tsv | sort -T TMP -t $'\t' -k1,1 > TMP/sorted.refs.txt
@@ -115,7 +117,7 @@ join -t $'\t' -1 1 -2 1  TMP/sorted.refs.txt TMP/references.md5.tmp.a | sort -t 
 rm -f  TMP/references.md5.tmp.a
 md_pre
 
-For each VCF, the header is extracted, we extract the the md_code(chromosome) and md_code(length) of the md_code(contig) lines, we calculate the md_code(md5) checksum and we sort on  md_code(md5).
+For each md_code(VCF), the header is extracted, we extract the the md_code(chromosome) and md_code(length) of the md_code(contig) lines, we calculate the md_code(md5) checksum and we sort on  md_code(md5).
 
 md_pre(bash)
 find data -type f \( -name "*.vcf.gz" -o -name "*.bcf" -o -name "*.vcf" \) | sort > TMP/vcfs.txt
@@ -221,6 +223,6 @@ sparql_example(data/query.bams.01.sparql,TMP/bams.01.out)
 
 # The Graph
 
-and here is the RDF graph
+and here is the md_code(RDF) graph as a md_code(SVG) document:
 
 ![knowledge.svg](knowledge.svg)
