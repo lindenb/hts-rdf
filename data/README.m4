@@ -19,9 +19,7 @@ md_pre
 
 output localfile($2):
 
-md_pre
-m4_syscmd(cat $2)m4_dnl
-md_pre
+m4_syscmd(awk -f data/tsv2markdown.awk $2)m4_dnl
 
 
 ')m4_dnl

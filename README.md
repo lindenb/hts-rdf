@@ -306,15 +306,11 @@ arq --data=knowledge.rdf --query=data/query.species.01.sparql > TMP/species.01.o
 
 output [TMP/species.01.out](TMP/species.01.out):
 
-```
------------------------------------
-| taxonName                       |
-===================================
-| "Homo sapiens neanderthalensis" |
-| "Homo Sapiens"                  |
-| "Homo"                          |
------------------------------------
-```
+| taxonName  |
+|-----|
+| "Homo sapiens neanderthalensis"  |
+| "Homo Sapiens"  |
+| "Homo"  |
 
 
 
@@ -348,14 +344,10 @@ arq --data=knowledge.rdf --query=data/query.diseases.01.sparql > TMP/diseases.01
 
 output [TMP/diseases.01.out](TMP/diseases.01.out):
 
-```
----------------------
-| diseaseName       |
-=====================
-| "COVID-19"        |
-| "Severe COVID-19" |
----------------------
-```
+| diseaseName  |
+|-----|
+| "COVID-19"  |
+| "Severe COVID-19"  |
 
 
 
@@ -417,17 +409,13 @@ arq --data=knowledge.rdf --query=data/query.samples.01.sparql > TMP/samples.01.o
 
 output [TMP/samples.01.out](TMP/samples.01.out):
 
-```
-------------------------------------------------------------------------------------------
-| colName | colGender | colFather | colMother | colChildren | colDiseases                |
-==========================================================================================
-| "S1"    | "female"  | "S3"      | "S2"      |             | "Turner Syndrome;COVID-19" |
-| "S2"    | "female"  |           |           | "S1"        |                            |
-| "S3"    | "male"    |           |           | "S1"        | "Severe COVID-19"          |
-| "S4"    |           |           |           |             |                            |
-| "S5"    |           |           |           |             |                            |
-------------------------------------------------------------------------------------------
-```
+| colName | colGender | colFather | colMother | colChildren | colDiseases  |
+|-----|-----|-----|-----|-----|-----|
+| "S1" | "female" | "S3" | "S2" |  | "Turner Syndrome;COVID-19"  |
+| "S2" | "female" |  |  | "S1" |   |
+| "S3" | "male" |  |  | "S1" | "Severe COVID-19"  |
+| "S4" |  |  |  |  |   |
+| "S5" |  |  |  |  |   |
 
 
 
@@ -479,19 +467,15 @@ arq --data=knowledge.rdf --query=data/query.vcfs.01.sparql > TMP/vcfs.01.out
 
 output [TMP/vcfs.01.out](TMP/vcfs.01.out):
 
-```
---------------------------------------------------------------------------
-| vcfPath              | fasta             | taxonName      | sampleName |
-==========================================================================
-| "data/variants2.vcf" | "data/hg19.fasta" | "Homo Sapiens" | "S1"       |
-| "data/variants2.vcf" | "data/hg19.fasta" | "Homo Sapiens" | "S2"       |
-| "data/variants2.vcf" | "data/hg19.fasta" | "Homo Sapiens" | "S3"       |
-| "data/variants1.vcf" | "data/hg38.fasta" | "Homo Sapiens" | "S1"       |
-| "data/variants1.vcf" | "data/hg38.fasta" | "Homo Sapiens" | "S5"       |
-| "data/variants1.vcf" | "data/hg38.fasta" | "Homo Sapiens" | "S2"       |
-| "data/variants1.vcf" | "data/hg38.fasta" | "Homo Sapiens" | "S3"       |
---------------------------------------------------------------------------
-```
+| vcfPath | fasta | taxonName | sampleName  |
+|-----|-----|-----|-----|
+| "data/variants2.vcf" | "data/hg19.fasta" | "Homo Sapiens" | "S1"  |
+| "data/variants2.vcf" | "data/hg19.fasta" | "Homo Sapiens" | "S2"  |
+| "data/variants2.vcf" | "data/hg19.fasta" | "Homo Sapiens" | "S3"  |
+| "data/variants1.vcf" | "data/hg38.fasta" | "Homo Sapiens" | "S1"  |
+| "data/variants1.vcf" | "data/hg38.fasta" | "Homo Sapiens" | "S5"  |
+| "data/variants1.vcf" | "data/hg38.fasta" | "Homo Sapiens" | "S2"  |
+| "data/variants1.vcf" | "data/hg38.fasta" | "Homo Sapiens" | "S3"  |
 
 
 
@@ -578,18 +562,14 @@ arq --data=knowledge.rdf --query=data/query.bams.01.sparql > TMP/bams.01.out
 
 output [TMP/bams.01.out](TMP/bams.01.out):
 
-```
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-| bamPath                                        | colFasta               | colTaxon       | colSampleName | colGroups | colGender | colDiseases                | colFather | colMother | colChildren |
-=======================================================================================================================================================================================================
-| "/home/lindenb/src/hts-rdf/data/S1.grch38.bam" | "data/hg38.fasta"      | "Homo Sapiens" | "S1"          | "Fam01"   | "female"  | "Turner Syndrome;COVID-19" | "S3"      | "S2"      |             |
-| "/home/lindenb/src/hts-rdf/data/S2.grch37.bam" | "data/hg19.fasta"      | "Homo Sapiens" | "S2"          | "Fam01"   | "female"  |                            |           |           | "S1"        |
-| "/home/lindenb/src/hts-rdf/data/S4.RF.bam"     | "data/rotavirus_rf.fa" | "Rotavirus"    | "S4"          |           |           |                            |           |           |             |
-| "/home/lindenb/src/hts-rdf/data/S5.grch38.bam" | "data/hg38.fasta"      | "Homo Sapiens" | "S5"          | "Fam01"   |           |                            |           |           |             |
-| "/home/lindenb/src/hts-rdf/data/S3.grch38.bam" | "data/hg38.fasta"      | "Homo Sapiens" | "S3"          | "Fam01"   | "male"    | "Severe COVID-19"          |           |           | "S1"        |
-| "/home/lindenb/src/hts-rdf/data/S1.grch37.bam" | "data/hg19.fasta"      | "Homo Sapiens" | "S1"          | "Fam01"   | "female"  | "Turner Syndrome;COVID-19" | "S3"      | "S2"      |             |
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-```
+| bamPath | colFasta | colTaxon | colSampleName | colGroups | colGender | colDiseases | colFather | colMother | colChildren  |
+|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|
+| "/home/lindenb/src/hts-rdf/data/S1.grch38.bam" | "data/hg38.fasta" | "Homo Sapiens" | "S1" | "Fam01" | "female" | "Turner Syndrome;COVID-19" | "S3" | "S2" |   |
+| "/home/lindenb/src/hts-rdf/data/S2.grch37.bam" | "data/hg19.fasta" | "Homo Sapiens" | "S2" | "Fam01" | "female" |  |  |  | "S1"  |
+| "/home/lindenb/src/hts-rdf/data/S4.RF.bam" | "data/rotavirus_rf.fa" | "Rotavirus" | "S4" |  |  |  |  |  |   |
+| "/home/lindenb/src/hts-rdf/data/S5.grch38.bam" | "data/hg38.fasta" | "Homo Sapiens" | "S5" | "Fam01" |  |  |  |  |   |
+| "/home/lindenb/src/hts-rdf/data/S3.grch38.bam" | "data/hg38.fasta" | "Homo Sapiens" | "S3" | "Fam01" | "male" | "Severe COVID-19" |  |  | "S1"  |
+| "/home/lindenb/src/hts-rdf/data/S1.grch37.bam" | "data/hg19.fasta" | "Homo Sapiens" | "S1" | "Fam01" | "female" | "Turner Syndrome;COVID-19" | "S3" | "S2" |   |
 
 
 

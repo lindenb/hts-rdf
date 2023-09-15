@@ -22,7 +22,8 @@ README.md : data/README.m4 \
 		TMP/samples.01.out \
 		TMP/bams.01.out \
 		TMP/vcfs.01.out \
-		TMP/references.rdf
+		TMP/references.rdf \
+		data/tsv2markdown.awk
 	m4 -P < $< > $(addsuffix .tmp,$@)
 	mv $(addsuffix .tmp,$@) $@
 
@@ -44,23 +45,23 @@ data/species.svg : data/species.rdf
 
 TMP/species.01.out: knowledge.rdf data/query.species.01.sparql
 	mkdir -p $(dir $@)
-	$(ARQ) --data=$(word 1,$^) --query=$(word 2,$^) > $@
+	$(ARQ) --data=$(word 1,$^) --query=$(word 2,$^)  --results=TSV > $@
 
 TMP/diseases.01.out: knowledge.rdf data/query.diseases.01.sparql
 	mkdir -p $(dir $@)
-	$(ARQ) --data=$(word 1,$^) --query=$(word 2,$^) > $@
+	$(ARQ) --data=$(word 1,$^) --query=$(word 2,$^)  --results=TSV > $@
 
 TMP/samples.01.out: knowledge.rdf data/query.samples.01.sparql
 	mkdir -p $(dir $@)
-	$(ARQ) --data=$(word 1,$^) --query=$(word 2,$^) > $@
+	$(ARQ) --data=$(word 1,$^) --query=$(word 2,$^)  --results=TSV > $@
 
 TMP/bams.01.out: knowledge.rdf data/query.bams.01.sparql
 	mkdir -p $(dir $@)
-	$(ARQ) --data=$(word 1,$^) --query=$(word 2,$^) > $@
+	$(ARQ) --data=$(word 1,$^) --query=$(word 2,$^)  --results=TSV > $@
 
 TMP/vcfs.01.out: knowledge.rdf data/query.vcfs.01.sparql
 	mkdir -p $(dir $@)
-	$(ARQ) --data=$(word 1,$^) --query=$(word 2,$^) > $@
+	$(ARQ) --data=$(word 1,$^) --query=$(word 2,$^)  --results=TSV > $@
 
 
 knowledge.rdf : TMP/references.rdf data/species.rdf TMP/bams.rdf TMP/bams.rdf data/diseases.rdf data/samples.rdf TMP/vcf2ref.rdf  TMP/vcf2samples.rdf
